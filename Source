@@ -1,0 +1,149 @@
+#include<iostream>
+#include<conio.h>
+#include<stdlib.h>
+
+
+using namespace std;
+
+
+bool gameover = false;
+int score = 0;
+const int width = 40, height = 20;
+enum direction { STOP = 0,UP,DOWN,LEFT,RIGHT };
+direction dir;
+int x, y, fruit_x, fruit_y, prev_x[100], prev_y[100];
+int body_x[100], body_y[100], ntail;
+
+
+void setup();
+void logic();
+void draw();
+void input();
+
+
+
+int main()
+{
+
+	setup();
+	while (!gameover)
+	{
+		system("CLS");
+		draw();
+		input();
+		logic();
+	}
+	
+	return 0;
+}
+
+
+void setup()
+{
+	gameover = false;
+	score = 0;
+	x = width / 2;
+	y = height / 2;
+	fruit_x = rand() % width;
+	fruit_y = rand() % height;
+	dir = STOP;
+	ntail = 0;
+
+}
+
+void draw()
+{
+	int i, j;
+	for (i = 0; i < width; i++)
+		cout << "#";
+	cout << endl;
+	for (i = 0; i < height; i++)
+	{
+		for (j = 0; j < width; j++)
+		{
+			if (x > width || x < 0 || y<0 || y>height)
+			{
+				cout << "Your final score is " << score << endl;
+				system("pause");
+				exit(0);
+			}
+			if (j == 0 || j == width - 1)
+				cout << "#";
+			else 
+			if (i == y && j == x)
+				cout << "O";
+			else
+		    if (i == fruit_y && j == fruit_x)
+				cout << "$";
+			else cout << " ";
+			for (int k = 0; k < ntail; k++)
+			{
+				if (i == body_y[k] && j == body_x[k])
+					cout << "o";
+			}
+		}
+		cout << endl;
+	}
+	for (i = 0; i < width; i++)
+		cout << "#";
+	cout << endl;
+
+}
+
+void input()
+{
+	if (_kbhit())
+	{
+		switch (_getch())
+		{
+		case 'w': dir = UP;
+			break;
+		case 'a': dir = LEFT;
+			break;
+		case 's': dir = DOWN;
+			break;
+		case 'd': dir = RIGHT;
+			break;
+		}
+
+	}
+	
+}
+
+void logic()
+{
+	int i,p_x,p_y;
+	p_x = x;
+	p_y = y;
+	switch (dir)
+	{
+	case UP:    y--;
+		break;
+	case LEFT:  x--;
+		break;
+	case DOWN:  y++;
+		break;
+	case RIGHT: x++;
+		break;
+	}
+	if (x == fruit_x && y == fruit_y)
+	{
+		score += 10;
+		ntail++;
+		fruit_x = rand() % width;
+		fruit_y = rand() % height;
+	}
+	prev_x[0] = p_x;
+	prev_y[0] = p_y;
+	for (i = 0; i < ntail; i++)
+	{
+		body_x[i] = prev_x[i];
+		body_y[i] = prev_y[i];
+	}
+	for (i = 0; i < ntail; i++)
+	{
+		body_x[i] = prev_x[i+1];
+		body_y[i] = prev_y[i+1];
+	}
+
+}
