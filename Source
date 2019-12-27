@@ -8,10 +8,10 @@ using namespace std;
 
 bool gameover = false;
 int score = 0;
-const int width = 40, height = 20;
+const int width = 50, height = 30;
 enum direction { STOP = 0,UP,DOWN,LEFT,RIGHT };
 direction dir;
-int x, y, fruit_x, fruit_y, prev_x[100], prev_y[100];
+int x, y, fruit_x, fruit_y;
 int body_x[100], body_y[100], ntail;
 
 
@@ -24,7 +24,6 @@ void input();
 
 int main()
 {
-
 	setup();
 	while (!gameover)
 	{
@@ -54,7 +53,9 @@ void setup()
 void draw()
 {
 	int i, j;
-	for (i = 0; i < width; i++)
+	cout << "\n\n\n\n";
+	cout << "                                   S N A K E    G A M E\n\n\n\n";
+	for (i = 0; i < width*2; i++)
 		cout << "#";
 	cout << endl;
 	for (i = 0; i < height; i++)
@@ -71,20 +72,26 @@ void draw()
 				cout << "#";
 			else 
 			if (i == y && j == x)
-				cout << "O";
+				cout << "0";
 			else
 		    if (i == fruit_y && j == fruit_x)
 				cout << "$";
 			else cout << " ";
+			int t=0;
 			for (int k = 0; k < ntail; k++)
 			{
 				if (i == body_y[k] && j == body_x[k])
+				{
 					cout << "o";
+					t = 1;
+				}
 			}
+			if (t != 1)
+				cout << " ";
 		}
 		cout << endl;
 	}
-	for (i = 0; i < width; i++)
+	for (i = 0; i < width*2; i++)
 		cout << "#";
 	cout << endl;
 
@@ -132,18 +139,25 @@ void logic()
 		ntail++;
 		fruit_x = rand() % width;
 		fruit_y = rand() % height;
+
 	}
-	prev_x[0] = p_x;
-	prev_y[0] = p_y;
+
+	for (i = ntail - 1; i >= 0; i--)
+	{
+		body_x[i + 1] = body_x[i];
+		body_y[i + 1] = body_y[i];
+	}
+	body_x[0] = p_x;
+	body_y[0] = p_y;
+	
 	for (i = 0; i < ntail; i++)
 	{
-		body_x[i] = prev_x[i];
-		body_y[i] = prev_y[i];
-	}
-	for (i = 0; i < ntail; i++)
-	{
-		body_x[i] = prev_x[i+1];
-		body_y[i] = prev_y[i+1];
+		if (x == body_x[i] && y == body_y[i])
+		{
+			cout << "Your final score is " << score << endl;
+			system("pause");
+			exit(0);
+		}
 	}
 
 }
